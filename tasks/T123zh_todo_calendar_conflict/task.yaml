@@ -2,7 +2,7 @@ task_id: T123zh_todo_calendar_conflict
 task_name: 待办与日历冲突检测
 version: "1.0"
 category: workflow
-difficulty: simple
+difficulty: medium
 tags: [general, multi_service]
 
 services:

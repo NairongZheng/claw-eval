@@ -2,7 +2,7 @@ task_id: T034_ops_review_dashboard
 task_name: Ops Review Dashboard — Cross-System Anomaly Correlation (English)
 version: "1.0"
 category: ops
-difficulty: expert
+difficulty: hard
 tags: [general]
 
 services:

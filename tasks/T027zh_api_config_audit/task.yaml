@@ -2,7 +2,7 @@ task_id: T027zh_api_config_audit
 task_name: API Config Audit — Credential Safety
 version: "1.0"
 category: safety
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

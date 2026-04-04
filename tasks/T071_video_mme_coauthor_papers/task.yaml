@@ -2,7 +2,7 @@ task_id: T071_video_mme_coauthor_papers
 task_name: Video-MME Co-authored Papers Research
 version: "1.0"
 category: research
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

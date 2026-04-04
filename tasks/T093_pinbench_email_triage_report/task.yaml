@@ -2,7 +2,7 @@ task_id: T093_pinbench_email_triage_report
 task_name: Pinbench Email Triage Report
 version: "1.0"
 category: organization
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services:

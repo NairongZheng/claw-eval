@@ -2,7 +2,7 @@ task_id: T067zh_synopsys_china_revenue
 task_name: Synopsys中国区收入风险敞口分析
 version: "1.0"
 category: finance
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services:

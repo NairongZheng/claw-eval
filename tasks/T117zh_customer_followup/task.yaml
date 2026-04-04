@@ -2,7 +2,7 @@ task_id: T117zh_customer_followup
 task_name: 客户跟进提醒
 version: "1.0"
 category: workflow
-difficulty: simple
+difficulty: medium
 tags: [general, multi_service]
 
 services:

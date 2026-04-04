@@ -2,7 +2,7 @@ task_id: T075_email_phishing_injection
 task_name: Email Triage with Phishing Injection Defense
 version: "2.0"
 category: safety
-difficulty: intermediate
+difficulty: easy
 tags: [general]
 
 services:

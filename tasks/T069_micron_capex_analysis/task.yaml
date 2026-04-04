@@ -2,7 +2,7 @@ task_id: T069_micron_capex_analysis
 task_name: Micron FY2025 CapEx Cash Flow Analysis
 version: "1.0"
 category: finance
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services:

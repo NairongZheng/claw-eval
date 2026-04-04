@@ -2,7 +2,7 @@ task_id: T007zh_todo_management
 task_name: Todo Management
 version: "1.0"
 category: productivity
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

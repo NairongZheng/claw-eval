@@ -2,7 +2,7 @@ task_id: T056zh_phone_model_comparison
 task_name: 从图片识别两款手机型号
 version: '1.0'
 category: multimodal
-difficulty: simple
+difficulty: hard
 tags: [general]
 services:
   - name: caption

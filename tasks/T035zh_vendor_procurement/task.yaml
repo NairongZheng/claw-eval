@@ -2,7 +2,7 @@ task_id: T035zh_vendor_procurement
 task_name: Vendor Procurement Evaluation
 version: "1.0"
 category: procurement
-difficulty: expert
+difficulty: hard
 tags: [general]
 
 services:

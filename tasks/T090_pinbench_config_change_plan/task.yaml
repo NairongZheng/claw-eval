@@ -2,7 +2,7 @@ task_id: T090_pinbench_config_change_plan
 task_name: Pinbench Config Change Plan
 version: "1.0"
 category: ops
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

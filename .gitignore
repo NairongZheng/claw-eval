@@ -28,4 +28,7 @@ configs/
 
 0325_all_traces/
 0325_general_traces/
-
+configs_paper/
+results/
+*.png
+scripts/

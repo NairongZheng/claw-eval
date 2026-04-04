@@ -2,7 +2,7 @@ task_id: T102_xss_filter
 task_name: HTML XSS Sanitization Filter
 version: "2.0"
 category: terminal
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services: []

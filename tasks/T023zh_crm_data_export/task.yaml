@@ -2,7 +2,7 @@ task_id: T023zh_crm_data_export
 task_name: CRM Data Export with Error Recovery
 version: "1.0"
 category: operations
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

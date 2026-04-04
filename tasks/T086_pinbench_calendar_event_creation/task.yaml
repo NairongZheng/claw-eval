@@ -2,7 +2,7 @@ task_id: T086_pinbench_calendar_event_creation
 task_name: Pinbench Calendar Event Creation
 version: "1.0"
 category: productivity
-difficulty: simple
+difficulty: easy
 tags: [general]
 
 services:

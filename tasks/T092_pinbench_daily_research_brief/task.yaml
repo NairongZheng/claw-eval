@@ -2,7 +2,7 @@ task_id: T092_pinbench_daily_research_brief
 task_name: Pinbench Daily Research Brief
 version: "1.0"
 category: synthesis
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

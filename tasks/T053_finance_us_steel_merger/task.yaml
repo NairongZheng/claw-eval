@@ -2,7 +2,7 @@ task_id: T053_finance_us_steel_merger
 task_name: US Steel Merger Impact Analysis
 version: "1.0"
 category: finance
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services:

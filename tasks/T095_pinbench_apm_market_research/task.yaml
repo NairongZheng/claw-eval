@@ -2,7 +2,7 @@ task_id: T095_pinbench_apm_market_research
 task_name: Pinbench APM Market Research
 version: "1.0"
 category: research
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services:

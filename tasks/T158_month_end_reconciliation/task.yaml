@@ -2,7 +2,7 @@ task_id: T158_month_end_reconciliation
 task_name: Month-End Comprehensive Reconciliation
 version: "1.0"
 category: ops
-difficulty: expert
+difficulty: hard
 tags: [general, multi_service]
 
 services:

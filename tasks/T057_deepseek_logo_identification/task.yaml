@@ -2,7 +2,7 @@ task_id: T057_deepseek_logo_identification
 task_name: 从图片识别 DeepSeek Logo
 version: '1.0'
 category: multimodal
-difficulty: simple
+difficulty: hard
 tags: [general]
 services:
   - name: caption

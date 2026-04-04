@@ -2,7 +2,7 @@ task_id: T121zh_industry_briefing
 task_name: 行业简报整理
 version: "1.0"
 category: workflow
-difficulty: simple
+difficulty: medium
 tags: [general, multi_service]
 
 services:

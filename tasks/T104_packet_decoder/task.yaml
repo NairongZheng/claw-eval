@@ -2,7 +2,7 @@ task_id: T104_packet_decoder
 task_name: Binary Protocol Packet Decoder
 version: "2.0"
 category: terminal
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services: []

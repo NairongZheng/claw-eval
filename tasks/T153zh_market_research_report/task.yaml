@@ -2,7 +2,7 @@ task_id: T153zh_market_research_report
 task_name: 综合市场研究报告
 version: "1.0"
 category: workflow
-difficulty: expert
+difficulty: hard
 tags: [general, multi_service]
 
 services:

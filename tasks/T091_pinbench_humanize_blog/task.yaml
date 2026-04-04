@@ -2,7 +2,7 @@ task_id: T091_pinbench_humanize_blog
 task_name: Pinbench Humanize Blog
 version: "1.0"
 category: rewriting
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 prompt:

@@ -203,7 +203,7 @@ def _message_to_openai(msg: Message) -> dict[str, Any] | list[dict[str, Any]]:
     if tool_uses:
         d = {
             "role": "assistant",
-            "content": _blocks_to_openai_content(msg),
+            "content": _blocks_to_openai_content(msg) or None,
             "tool_calls": [
                 {
                     "id": tu.id,
@@ -281,12 +281,12 @@ class OpenAICompatProvider:
         if tools:
             kwargs["tools"] = [_tool_spec_to_openai(t) for t in tools]
 
-        max_retries = 5
+        max_retries = 20
         last_exc: Exception | None = None
-        use_stream = False  # default: non-streaming
+        use_stream = False  # default
         for attempt in range(max_retries + 1):
             try:
-                if attempt <= 1:
+                if attempt <= 1 and not use_stream:
                     response = self._call_without_stream(kwargs)
                 else:
                     response = self._call_with_stream(kwargs)
@@ -301,6 +301,7 @@ class OpenAICompatProvider:
                 retryable = (
                     status in (429, 500, 502, 503, 529)
                     or "timeout" in exc_str
+                    or "timed out" in exc_str
                     or "connection" in exc_str
                     or "empty choices" in exc_str
                     or "remoteprotocol" in exc_type
@@ -308,6 +309,9 @@ class OpenAICompatProvider:
                     or "peer closed" in exc_str
                     or "incomplete" in exc_str
                     or "server disconnected" in exc_str
+                    or "jsondecode" in exc_type
+                    or "provider returned error" in exc_str
+                    or "operation not allowed" in exc_str
                 )
                 if not retryable or attempt == max_retries:
                     if has_multimodal_input:
@@ -318,10 +322,14 @@ class OpenAICompatProvider:
                             "or set media.strict_mode=false to allow skips."
                         ) from exc
                     raise
-                # Non-streaming timeout → switch to streaming to keep connection alive
-                if not use_stream and ("timeout" in exc_str or "read timed out" in exc_str) and attempt >= 1:
+                # Non-streaming error → switch to streaming immediately
+                if not use_stream and (
+                    "timeout" in exc_str
+                    or "timed out" in exc_str
+                    or "jsondecode" in exc_type
+                ):
                     use_stream = True
-                    print(f"[retry] Switching to streaming mode after repeated timeouts")
+                    print(f"[retry] Switching to streaming mode after {type(exc).__name__}")
                 # Exponential backoff with jitter
                 delay = random.uniform(2, 4)
                 print(f"[retry] API error ({status or type(exc).__name__}), "

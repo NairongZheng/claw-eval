@@ -2,7 +2,7 @@ task_id: T113zh_meeting_preparation
 task_name: 会议准备材料整理
 version: "1.0"
 category: workflow
-difficulty: simple
+difficulty: medium
 tags: [general, multi_service]
 
 services:

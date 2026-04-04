@@ -2,7 +2,7 @@ task_id: T118_customer_followup
 task_name: Customer Follow-up Reminders
 version: "1.0"
 category: workflow
-difficulty: simple
+difficulty: medium
 tags: [general, multi_service]
 
 services:

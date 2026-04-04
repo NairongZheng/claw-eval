@@ -2,7 +2,7 @@ task_id: T126_meeting_action_items
 task_name: Meeting Action Item Extraction and Deduplication
 version: "1.0"
 category: workflow
-difficulty: simple
+difficulty: medium
 tags: [general, multi_service]
 
 services:

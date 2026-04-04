@@ -2,7 +2,7 @@ task_id: T066_finance_bros_gross_profit
 task_name: Dutch Bros 2026 Gross Profit Projection
 version: "1.0"
 category: finance
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services:

@@ -2,7 +2,7 @@ task_id: T058zh_painting_identification
 task_name: 从图片识别《江南春》
 version: '1.0'
 category: multimodal
-difficulty: simple
+difficulty: hard
 tags: [general]
 services:
   - name: caption

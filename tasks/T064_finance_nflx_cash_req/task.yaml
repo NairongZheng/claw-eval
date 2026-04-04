@@ -2,7 +2,7 @@ task_id: T064_finance_nflx_cash_req
 task_name: Netflix Total Projected Material Cash Requirements 2025
 version: "1.0"
 category: finance
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

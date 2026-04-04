@@ -2,7 +2,7 @@ task_id: T154_market_research_report
 task_name: Comprehensive Market Research Report
 version: "1.0"
 category: workflow
-difficulty: expert
+difficulty: hard
 tags: [general, multi_service]
 
 services:

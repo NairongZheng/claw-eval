@@ -2,7 +2,7 @@ task_id: T016_kb_search
 task_name: Knowledge Base Search
 version: "1.0"
 category: knowledge
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services:

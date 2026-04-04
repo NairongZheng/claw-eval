@@ -2,7 +2,7 @@ task_id: T070zh_js_async_generator_trace
 task_name: JS异步生成器与微任务执行顺序追踪
 version: "1.0"
 category: coding
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services: []

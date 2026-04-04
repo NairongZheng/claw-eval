@@ -2,7 +2,7 @@ task_id: T013zh_meeting_notes
 task_name: Meeting Notes Action Items
 version: "1.0"
 category: productivity
-difficulty: simple
+difficulty: easy
 tags: [general]
 
 services:

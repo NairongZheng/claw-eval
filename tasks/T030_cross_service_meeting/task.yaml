@@ -2,7 +2,7 @@ task_id: T030_cross_service_meeting
 task_name: Cross-Service Meeting Coordination
 version: "1.0"
 category: workflow
-difficulty: hard
+difficulty: medium
 tags: [general]
 
 services:

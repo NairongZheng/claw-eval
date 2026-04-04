@@ -60,6 +60,80 @@ def _make_local_tool_result(tool_use, text: str, is_error: bool = False) -> Tool
     )
 
 
+def _cap_conversation_images(messages: list[Message], max_images: int) -> int:
+    """Drop earliest image blocks in-place when total exceeds *max_images*.
+
+    Protects messages[0] (system) and messages[1] (initial user prompt).
+    Keeps the *last* max_images images; replaces earlier ones with text
+    placeholders.  Returns the number of images dropped.
+    """
+    if max_images <= 0:
+        return 0
+
+    # Count ALL images (including protected prompt) to respect global budget
+    total_images = sum(
+        1 for msg in messages for b in msg.content if b.type == "image"
+    )
+    if total_images <= max_images:
+        return 0
+
+    # Protected images in messages[0:2] (system + initial prompt)
+    protected = sum(
+        1 for msg in messages[:2] for b in msg.content if b.type == "image"
+    )
+    # Non-protected budget: total budget minus the protected images
+    allowed = max(0, max_images - protected)
+
+    # Collect positions of droppable images (messages[2:])
+    positions: list[tuple[int, int]] = []
+    for mi in range(2, len(messages)):
+        for bi, block in enumerate(messages[mi].content):
+            if block.type == "image":
+                positions.append((mi, bi))
+
+    if len(positions) <= allowed:
+        return 0
+
+    # Drop earliest, keep the last `allowed`
+    n_drop = len(positions) - allowed
+    for mi, bi in positions[:n_drop]:
+        messages[mi].content[bi] = TextBlock(
+            text="[Image dropped: conversation image limit reached]"
+        )
+    return n_drop
+
+
+def _strip_old_turn_images(messages: list[Message], keep_recent_turns: int = 3) -> int:
+    """Strip ImageBlocks from messages older than *keep_recent_turns* turns.
+
+    A turn is defined by an assistant message.  All images in messages before
+    the *keep_recent_turns*-th most recent assistant message are removed
+    in-place.  Text content (including media captions) is preserved.
+    """
+    if keep_recent_turns <= 0:
+        return 0
+
+    assistant_indices = [
+        i for i, msg in enumerate(messages)
+        if msg.role == "assistant"
+    ]
+
+    if len(assistant_indices) <= keep_recent_turns:
+        return 0
+
+    cutoff_idx = assistant_indices[-keep_recent_turns]
+
+    n_stripped = 0
+    for i in range(cutoff_idx):
+        msg = messages[i]
+        new_content = [b for b in msg.content if b.type != "image"]
+        removed = len(msg.content) - len(new_content)
+        if removed:
+            msg.content = new_content
+            n_stripped += removed
+
+    return n_stripped
+
 
 def _build_initial_user_content(
     task: TaskDefinition,
@@ -181,6 +255,7 @@ def run_task(
 
     endpoint_map = task.get_endpoint_map()
     http_dispatcher = ToolDispatcher(endpoint_map)
+    _mcfg = media_cfg or MediaConfig()
 
     sandbox_tool_list = None
     if sandbox_tools:
@@ -191,12 +266,12 @@ def run_task(
         existing_names = {t.name for t in task.tools}
         sandbox_tool_list = [t for t in SANDBOX_TOOLS if t.name not in existing_names]
         task_tools = list(task.tools) + sandbox_tool_list
-        _mcfg = media_cfg or MediaConfig()
         dispatcher = SandboxToolDispatcher(
             http_dispatcher,
             sandbox_url=sandbox_url,
             max_images_per_turn=_mcfg.max_images_per_turn,
-            max_tool_images_total=_mcfg.max_tool_images_total,
+            tool_image_max_dimension=_mcfg.tool_image_max_dimension,
+            tool_image_quality=_mcfg.tool_image_quality,
         )
     else:
         task_tools = task.tools
@@ -311,6 +386,16 @@ def run_task(
                         messages_after=len(messages),
                     ))
                     _log(f"[auto-compact] done: {tokens_before} → {tokens_after} tokens, {msgs_before} → {len(messages)} msgs")
+
+                # Strip images from turns older than keep_recent_turns
+                n_old = _strip_old_turn_images(messages, _mcfg.image_keep_recent_turns)
+                if n_old > 0:
+                    _log(f"  [image-strip] stripped {n_old} image(s) from old turns, keeping last {_mcfg.image_keep_recent_turns} turns")
+
+                # Cap total images in conversation before API call
+                n_dropped = _cap_conversation_images(messages, _mcfg.max_conversation_images)
+                if n_dropped > 0:
+                    _log(f"  [image-cap] dropped {n_dropped} oldest image(s), keeping last {_mcfg.max_conversation_images}")
 
                 # Call model
                 _log(f"[turn {turn_count + 1}/{task.environment.max_turns}] calling model ...")

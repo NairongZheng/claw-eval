@@ -2,7 +2,7 @@ task_id: T068zh_llama_w8a8_cuda_bug
 task_name: LLaMA W8A8量化CUDA Kernel致命Bug审查
 version: "1.0"
 category: coding
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services:

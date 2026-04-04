@@ -2,7 +2,7 @@ task_id: T032_escalation_budget_triage
 task_name: Cross-Service Customer Escalation Triage with Budget Constraints (English)
 version: "1.0"
 category: workflow
-difficulty: expert
+difficulty: hard
 tags: [general]
 
 services:

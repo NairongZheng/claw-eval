@@ -2,7 +2,7 @@ task_id: T103_schema_migration
 task_name: SQLite Schema Migration
 version: "2.0"
 category: terminal
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services: []

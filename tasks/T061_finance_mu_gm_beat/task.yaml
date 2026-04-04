@@ -2,7 +2,7 @@ task_id: T061_finance_mu_gm_beat
 task_name: Micron Q3 2024 GAAP Gross Margin Beat
 version: "1.0"
 category: finance
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

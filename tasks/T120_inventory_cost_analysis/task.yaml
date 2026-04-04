@@ -2,14 +2,14 @@ task_id: T120_inventory_cost_analysis
 task_name: Inventory Cost Analysis
 version: "1.0"
 category: ops
-difficulty: simple
+difficulty: medium
 tags: [general, multi_service]
 
 services:
   - name: inventory
     command: python mock_services/inventory/server.py
     port: 9108
-    health_check: http://localhost:9108/inventory/items
+    health_check: http://localhost:9108/inventory/products
     health_check_method: POST
     ready_timeout: 10
     reset_endpoint: http://localhost:9108/inventory/reset
@@ -81,10 +81,10 @@ tools:
 
 tool_endpoints:
   - tool_name: inventory_list_items
-    url: http://localhost:9108/inventory/items
+    url: http://localhost:9108/inventory/products
     method: POST
   - tool_name: inventory_get_item
-    url: http://localhost:9108/inventory/items/get
+    url: http://localhost:9108/inventory/products/get
     method: POST
   - tool_name: finance_list_transactions
     url: http://localhost:9104/finance/transactions

@@ -2,7 +2,7 @@ task_id: T122_industry_briefing
 task_name: Industry Briefing Compilation
 version: "1.0"
 category: workflow
-difficulty: simple
+difficulty: medium
 tags: [general, multi_service]
 
 services:

@@ -2,7 +2,7 @@ task_id: T050_regulatory_research
 task_name: AI Regulatory Compliance Research
 version: "1.0"
 category: compliance
-difficulty: expert
+difficulty: easy
 tags: [general]
 
 services:

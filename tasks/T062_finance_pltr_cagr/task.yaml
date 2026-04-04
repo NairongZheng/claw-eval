@@ -2,7 +2,7 @@ task_id: T062_finance_pltr_cagr
 task_name: Palantir 2-Year Revenue CAGR 2022-2024
 version: "1.0"
 category: finance
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

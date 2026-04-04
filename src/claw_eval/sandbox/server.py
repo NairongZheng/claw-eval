@@ -76,14 +76,7 @@ class ReadMediaRequest(BaseModel):
     screen_size: str | None = None  # e.g. "1280x720" resize output
     # PDF options
     pdf_pages: str = "all"  # "all", "1-3", "1,3,5"
-    dpi: int = 150
-
-
-class Pdf2ImageRequest(BaseModel):
-    path: str
-    pages: str = "all"
-    dpi: int = 150
-    max_dimension: int = 1024
+    dpi: int = 100
 
 
 class DownloadRequest(BaseModel):
@@ -175,9 +168,9 @@ def read_file(req: FileReadRequest):
     if ext in _IMAGE_EXTS:
         return _read_image(p, None)
 
-    # PDF files with pages param → render as images
-    if ext == ".pdf" and req.pages:
-        return _read_pdf(p, req.pages, 150)
+    # PDF files → render as images
+    if ext == ".pdf":
+        return _read_pdf(p, req.pages or "all", 100)
 
     mime, _ = mimetypes.guess_type(str(p))
     # Known text mime OR known text extension → text; otherwise binary.
@@ -628,16 +621,6 @@ def read_media(req: ReadMediaRequest):
     except Exception as exc:
         return {"error": str(exc)}
 
-
-@app.post("/pdf2image")
-def pdf2image(req: Pdf2ImageRequest):
-    p = Path(req.path)
-    if not p.exists():
-        return {"error": f"File not found: {p}"}
-    try:
-        return _read_pdf(p, req.pages, req.dpi, req.max_dimension)
-    except Exception as exc:
-        return {"error": str(exc)}
 
 
 @app.post("/download")

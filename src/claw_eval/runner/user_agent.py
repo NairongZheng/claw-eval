@@ -72,7 +72,7 @@ class UserAgent:
             "请根据你的人设回复助手的最新消息。如果你满意了就输出 [DONE]。"
         )
 
-        max_retries = 5
+        max_retries = 30
         for attempt in range(max_retries):
             try:
                 resp = self.client.chat.completions.create(

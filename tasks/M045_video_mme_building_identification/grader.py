@@ -73,7 +73,7 @@ Scoring:
             )
             text_score = result.score if result else 0.0
 
-        # --- Image part (0.8): file exists (0.1) + visual judge (0.7) ---
+        # --- Image part (0.6): file exists (0.1) + visual judge (0.5) ---
         image_score = 0.0
         file_exists = self.check_file_exists(env_snapshot, self.OUTPUT_FILE)
         if file_exists:

@@ -2,7 +2,7 @@ task_id: T048_oss_comparison
 task_name: Open Source License Change Evaluation
 version: "1.0"
 category: ops
-difficulty: expert
+difficulty: easy
 tags: [general]
 
 services:

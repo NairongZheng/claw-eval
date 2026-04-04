@@ -2,7 +2,7 @@ task_id: T019zh_inventory_check
 task_name: Inventory Check
 version: "1.0"
 category: operations
-difficulty: simple
+difficulty: easy
 tags: [general]
 
 services:

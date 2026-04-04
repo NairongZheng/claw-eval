@@ -2,7 +2,7 @@ task_id: T097_pinbench_eli5_model_summary
 task_name: Pinbench ELI5 Model Summary
 version: "1.0"
 category: comprehension
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

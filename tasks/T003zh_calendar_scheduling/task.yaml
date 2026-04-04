@@ -2,7 +2,7 @@ task_id: T003zh_calendar_scheduling
 task_name: Calendar Scheduling
 version: "1.0"
 category: productivity
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

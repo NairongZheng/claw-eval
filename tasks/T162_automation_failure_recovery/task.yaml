@@ -2,7 +2,7 @@ task_id: T162_automation_failure_recovery
 task_name: Multi-Automation Cascade Failure Investigation and Recovery
 version: "1.0"
 category: ops
-difficulty: expert
+difficulty: hard
 tags: [general, multi_service]
 
 services:

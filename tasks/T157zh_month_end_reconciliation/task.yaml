@@ -2,7 +2,7 @@ task_id: T157zh_month_end_reconciliation
 task_name: 月末全面对账
 version: "1.0"
 category: ops
-difficulty: expert
+difficulty: hard
 tags: [general, multi_service]
 
 services:

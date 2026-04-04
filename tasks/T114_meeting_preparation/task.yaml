@@ -2,7 +2,7 @@ task_id: T114_meeting_preparation
 task_name: Meeting Preparation Materials
 version: "1.0"
 category: workflow
-difficulty: simple
+difficulty: medium
 tags: [general, multi_service]
 
 services:

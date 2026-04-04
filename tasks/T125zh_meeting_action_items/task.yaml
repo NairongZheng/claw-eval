@@ -2,7 +2,7 @@ task_id: T125zh_meeting_action_items
 task_name: 会议行动项提取与去重
 version: "1.0"
 category: workflow
-difficulty: simple
+difficulty: medium
 tags: [general, multi_service]
 
 services:

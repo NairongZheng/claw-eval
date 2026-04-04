@@ -2,7 +2,7 @@ task_id: T161zh_automation_failure_recovery
 task_name: 多自动化任务连锁故障排查与恢复
 version: "1.0"
 category: ops
-difficulty: expert
+difficulty: hard
 tags: [general, multi_service]
 
 services:

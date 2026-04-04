@@ -250,9 +250,24 @@ def analyze_model(model_name: str, trace_dir: Path, task_filter=None) -> dict:
 
 
 def _build_config_map(traces_root: Path) -> dict[str, str]:
-    """Build mapping from trace_dir (in config) -> config file path."""
-    configs_root = traces_root.parent / traces_root.name.replace("traces", "configs")
-    if not configs_root.exists():
+    """Build mapping from trace_dir (resolved absolute path) -> config file path.
+
+    Finds the configs directory by replacing the first 'traces' path component
+    with 'configs' in the resolved traces_root path, then walking up until an
+    existing directory is found.
+    """
+    resolved = traces_root.resolve()
+    parts = list(resolved.parts)
+    # Replace first path component containing 'traces' with 'configs' equivalent
+    configs_root = None
+    for i, part in enumerate(parts):
+        if "traces" in part:
+            parts[i] = part.replace("traces", "configs")
+            candidate = Path(*parts[:i + 1])
+            if candidate.exists():
+                configs_root = candidate
+                break
+    if configs_root is None or not configs_root.exists():
         return {}
     mapping: dict[str, str] = {}
     for cfg_path in sorted(configs_root.rglob("*.yaml")):
@@ -261,7 +276,7 @@ def _build_config_map(traces_root: Path) -> dict[str, str]:
                 data = yaml.safe_load(f)
             trace_dir = (data.get("defaults") or {}).get("trace_dir", "")
             if trace_dir:
-                mapping[trace_dir] = str(cfg_path)
+                mapping[str(Path(trace_dir).resolve())] = str(cfg_path)
         except Exception:
             pass
     return mapping
@@ -399,8 +414,8 @@ def main():
                 for fname, reason in t["errors"]:
                     print(f"      ERR: {fname}  ({reason})")
             trace_dir_path = Path(trace_dir)
-            parent_rel = str(trace_dir_path.parent)
-            cfg = config_map.get(parent_rel, "")
+            parent_abs = str(trace_dir_path.parent.resolve())
+            cfg = config_map.get(parent_abs, "")
             if cfg:
                 print(f"\n    # cleanup + re-run:")
                 print(f"    python cleanup_traces.py {trace_dir}")

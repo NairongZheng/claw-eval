@@ -2,7 +2,7 @@ task_id: T089_pinbench_config_workflow_notes
 task_name: Pinbench Config Workflow Notes
 version: "1.0"
 category: workflow
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

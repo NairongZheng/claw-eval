@@ -2,7 +2,7 @@ task_id: T087_pinbench_market_news_brief
 task_name: Pinbench Market News Brief
 version: "1.0"
 category: research
-difficulty: simple
+difficulty: easy
 tags: [general]
 
 services:

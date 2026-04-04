@@ -2,7 +2,7 @@ task_id: T045zh_cve_research
 task_name: CVE安全漏洞研究
 version: "1.0"
 category: security
-difficulty: expert
+difficulty: easy
 tags: [general]
 
 services:

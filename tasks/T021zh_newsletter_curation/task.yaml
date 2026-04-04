@@ -2,7 +2,7 @@ task_id: T021zh_newsletter_curation
 task_name: Newsletter Curation
 version: "1.0"
 category: content
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services:

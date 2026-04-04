@@ -32,7 +32,7 @@ sandbox_grader_files:
   - fixtures/take_recording.py
 
 env_snapshot_commands:
-  - "python /workspace/fixtures/take_recording.py file:///workspace/output.html --frames 10 --interval 0.5 --wait-before 2"
+  - "python /workspace/fixtures/take_recording.py file:///workspace/output.html --frames 15 --interval 0.5 --wait-before 1"
 
 env_snapshot_files:
   - /workspace/grading_frames/*.png

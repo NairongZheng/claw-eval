@@ -132,11 +132,13 @@ class MediaConfig(BaseModel):
     image_max_dimension: int = 2048
     # Tool-media injection settings (for ReadMedia / Read with image/PDF)
     inject_tool_media: bool = True
-    max_images_per_turn: int = 16
+    max_images_per_turn: int = 64
     max_tool_images_total: int = 64
     video_frame_budget: int = 8
     tool_image_quality: int = 60
-    tool_image_max_dimension: int = 768
+    tool_image_max_dimension: int = 1280
+    max_conversation_images: int = 256
+    image_keep_recent_turns: int = 3
 
 
 class UserAgentModelConfig(BaseModel):

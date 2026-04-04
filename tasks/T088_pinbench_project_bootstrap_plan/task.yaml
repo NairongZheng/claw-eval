@@ -2,7 +2,7 @@ task_id: T088_pinbench_project_bootstrap_plan
 task_name: Pinbench Project Bootstrap Plan
 version: "1.0"
 category: file_ops
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

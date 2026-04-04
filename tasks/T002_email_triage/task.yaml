@@ -2,7 +2,7 @@ task_id: T002_email_triage
 task_name: Email Triage
 version: "1.0"
 category: communication
-difficulty: simple
+difficulty: easy
 tags: [general]
 
 services:

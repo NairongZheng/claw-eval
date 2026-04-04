@@ -2,7 +2,7 @@ task_id: T072_restaurant_menu_contact
 task_name: Restaurant Menu Contact Info Extraction
 version: "1.0"
 category: multimodal
-difficulty: easy
+difficulty: medium
 tags: [general]
 
 services:

@@ -2,7 +2,7 @@ task_id: T105zh_job_failure_triage
 task_name: 定时任务故障与工单关联分析
 version: "1.0"
 category: ops
-difficulty: simple
+difficulty: medium
 tags: [general, multi_service]
 
 services:

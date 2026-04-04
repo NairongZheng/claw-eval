@@ -9,6 +9,8 @@ All other tool calls are delegated to the standard HTTP ToolDispatcher.
 
 from __future__ import annotations
 
+import base64
+import io
 import json
 import subprocess
 import time
@@ -25,6 +27,51 @@ _ALWAYS_MEDIA_TOOLS = frozenset({"ReadMedia", "BrowserScreenshot"})
 _CONDITIONAL_MEDIA_TOOLS = frozenset({"Read"})
 
 
+def _compress_image_b64(
+    data_b64: str, max_dimension: int, quality: int = 60
+) -> str:
+    """Resize + JPEG-compress a base64-encoded image.
+
+    - Resizes so the longest edge <= *max_dimension* (if needed).
+    - Converts to JPEG at the given *quality* (0–100).
+    - Handles RGBA / palette images by compositing onto white background.
+
+    Returns the original data unchanged when Pillow is unavailable or
+    any decoding/encoding error occurs.
+    """
+    try:
+        from PIL import Image as _PILImage
+
+        raw = base64.b64decode(data_b64)
+        img = _PILImage.open(io.BytesIO(raw))
+        w, h = img.size
+
+        # Resize if needed
+        needs_resize = max_dimension > 0 and max(w, h) > max_dimension
+        if needs_resize:
+            scale = max_dimension / max(w, h)
+            new_w = max(1, int(w * scale))
+            new_h = max(1, int(h * scale))
+            img = img.resize((new_w, new_h), _PILImage.LANCZOS)
+
+        # Convert to RGB for JPEG (handle RGBA, palette, LA, etc.)
+        if img.mode not in ("RGB", "L"):
+            background = _PILImage.new("RGB", img.size, (255, 255, 255))
+            if img.mode in ("RGBA", "LA") or (
+                img.mode == "P" and "transparency" in img.info
+            ):
+                background.paste(img, mask=img.split()[-1])
+            else:
+                background.paste(img)
+            img = background
+
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG", quality=quality)
+        return base64.b64encode(buf.getvalue()).decode("ascii")
+    except Exception:
+        return data_b64
+
+
 class SandboxToolDispatcher:
     """Routes sandbox tools to container HTTP or local fallback; others via HTTP."""
 
@@ -33,15 +80,16 @@ class SandboxToolDispatcher:
         http_dispatcher: ToolDispatcher,
         *,
         sandbox_url: str | None = None,
-        max_images_per_turn: int = 16,
-        max_tool_images_total: int = 64,
+        max_images_per_turn: int = 64,
+        tool_image_max_dimension: int = 1280,
+        tool_image_quality: int = 60,
     ) -> None:
         self._http = http_dispatcher
         self._sandbox_url = sandbox_url
         self._client = None  # lazy-init httpx client for remote mode
-        self._total_images_injected = 0
         self._max_per_turn = max_images_per_turn
-        self._max_total = max_tool_images_total
+        self._max_dimension = tool_image_max_dimension
+        self._image_quality = tool_image_quality
 
     # ---- public interface (same signature as ToolDispatcher) ---------------
 
@@ -148,20 +196,32 @@ class SandboxToolDispatcher:
         if is_media_response and not is_error:
             extra_images = []
             frames = body.get("frames", [])
-            remaining_total = max(0, self._max_total - self._total_images_injected)
-            budget = min(self._max_per_turn, remaining_total)
-            for frame in frames:
-                if len(extra_images) >= budget:
-                    break
-                if "image_b64" in frame:
-                    extra_images.append(ImageBlock(
-                        data=frame["image_b64"],
-                        mime_type=frame.get("mime_type", "image/png"),
-                    ))
-                    self._total_images_injected += 1
+            valid_frames = [f for f in frames if "image_b64" in f]
+            total_available = len(valid_frames)
+            budget = self._max_per_turn
+
+            # Uniform sampling when more frames than budget
+            if total_available <= budget:
+                selected = valid_frames
+            else:
+                indices = [int(i * total_available / budget) for i in range(budget)]
+                selected = [valid_frames[idx] for idx in indices]
+
+            for frame in selected:
+                compressed = _compress_image_b64(
+                    frame["image_b64"], self._max_dimension, self._image_quality,
+                )
+                extra_images.append(ImageBlock(
+                    data=compressed,
+                    mime_type="image/jpeg",
+                ))
+
             # Strip base64 data from text summary to save tokens
             summary_body = {k: v for k, v in body.items() if k != "frames"}
-            summary_body["frame_count"] = len(frames)
+            summary_body["frame_count"] = total_available
+            summary_body["frames_shown"] = len(selected)
+            if total_available > len(selected):
+                summary_body["sampling"] = f"uniform ({len(selected)} of {total_available})"
             text_content = json.dumps(summary_body, ensure_ascii=False)
             if not extra_images:
                 extra_images = None

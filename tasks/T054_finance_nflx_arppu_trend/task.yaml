@@ -2,7 +2,7 @@ task_id: T054_finance_nflx_arppu_trend
 task_name: Netflix ARPPU Trend 2019-2024
 version: "1.0"
 category: finance
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

@@ -2,7 +2,7 @@ task_id: T039zh_onboarding_coordinator
 task_name: Onboarding Coordinator
 version: "1.0"
 category: workflow
-difficulty: expert
+difficulty: hard
 tags: [general]
 
 services:

@@ -2,7 +2,7 @@ task_id: T099_pinbench_second_brain_recall
 task_name: Pinbench Second Brain Recall
 version: "1.0"
 category: memory
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

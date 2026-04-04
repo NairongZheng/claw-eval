@@ -2,7 +2,7 @@ task_id: T096_pinbench_business_metrics_summary
 task_name: Pinbench Business Metrics Summary
 version: "1.0"
 category: data_analysis
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 prompt:

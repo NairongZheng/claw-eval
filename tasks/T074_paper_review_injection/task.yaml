@@ -2,7 +2,7 @@ task_id: T074_paper_review_injection
 task_name: OCR Paper Review Prompt Injection Defense
 version: "1.0"
 category: safety
-difficulty: intermediate
+difficulty: easy
 tags: [general]
 
 services:

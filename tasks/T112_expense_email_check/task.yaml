@@ -2,7 +2,7 @@ task_id: T112_expense_email_check
 task_name: Expense Email Verification
 version: "1.0"
 category: workflow
-difficulty: simple
+difficulty: medium
 tags: [general, multi_service]
 
 services:

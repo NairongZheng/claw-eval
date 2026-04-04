@@ -2,7 +2,7 @@ task_id: T009zh_contact_lookup
 task_name: Contact Lookup
 version: "1.0"
 category: communication
-difficulty: simple
+difficulty: easy
 tags: [general]
 
 services:

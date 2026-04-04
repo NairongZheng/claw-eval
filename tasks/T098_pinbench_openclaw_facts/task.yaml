@@ -2,7 +2,7 @@ task_id: T098_pinbench_openclaw_facts
 task_name: Pinbench OpenClaw Facts
 version: "1.0"
 category: comprehension
-difficulty: medium
+difficulty: easy
 tags: [general]
 
 services:

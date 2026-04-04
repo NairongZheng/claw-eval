@@ -2,7 +2,7 @@ task_id: T018_ticket_triage
 task_name: Ticket Triage
 version: "1.0"
 category: operations
-difficulty: hard
+difficulty: easy
 tags: [general]
 
 services:
