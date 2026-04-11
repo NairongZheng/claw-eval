@@ -88,6 +88,8 @@ bash scripts/test_sandbox.sh
 
 > **Note on video fixtures:** Due to file size limits, this GitHub repository does not include video files for video-related tasks. The complete fixtures (including all videos) are available on Hugging Face: [claw-eval/Claw-Eval](https://huggingface.co/datasets/claw-eval/Claw-Eval).
 
+> **Note on grade:** we use **gemini-3-flash** in general and multimodal tasks while **claude opus4.6** for both grader and user-agent in multi_turn tasks!
+
 Go rock 🚀
 
 ```bash
@@ -99,9 +101,9 @@ claw-eval batch --config model_configs/claude_opus_46.yaml --sandbox --trials 3 
 
 ## Roadmap
 
-- [ ] More real-world, multimodal tasks in complex productivity environments
-- [ ] Comprehensive, fine-grained scoring logic with deep state verification
-- [ ] Enhanced sandbox isolation and full-trace tracking for transparent, scalable evaluation
+- [x] More real-world, multimodal tasks in complex productivity environments
+- [x] Comprehensive, fine-grained scoring logic with deep state verification
+- [x] Enhanced sandbox isolation and full-trace tracking for transparent, scalable evaluation
 
 
 ## Contribution
