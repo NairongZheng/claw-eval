@@ -32,3 +32,11 @@ configs_paper/
 results/
 *.png
 scripts/
+
+temp/
+.damonzheng/
+model_configs/
+
+tasks_gen/
+tasks_gen_all/
+tasks_test/
