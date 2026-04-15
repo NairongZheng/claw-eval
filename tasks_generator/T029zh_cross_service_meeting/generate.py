@@ -7,6 +7,7 @@ import argparse
 import json
 import random
 import shutil
+import uuid
 import textwrap
 from datetime import date, timedelta
 from pathlib import Path
@@ -84,8 +85,9 @@ def overlap(a: tuple[int, int], b: tuple[int, int]) -> bool:
     return a[0] < b[1] and a[1] > b[0]
 
 
-def build_task_id(prefix: str, index: int) -> str:
-    return f"{prefix}_{index:03d}"
+def build_task_id(id_prefix: str, task_index: int) -> str:
+    short_hash = uuid.uuid4().hex[:8]
+    return f"{id_prefix}_{task_index:03d}_{short_hash}"
 
 
 def choose_people(rng: random.Random) -> dict[str, str]:

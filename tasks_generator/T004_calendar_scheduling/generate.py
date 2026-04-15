@@ -15,6 +15,7 @@ import json
 import pprint
 import random
 import shutil
+import uuid
 import textwrap
 from dataclasses import asdict, dataclass
 from datetime import date, timedelta
@@ -929,7 +930,8 @@ def build_generation_meta(
 
 
 def build_task_id(id_prefix: str, task_index: int) -> str:
-    return f"{id_prefix}_{task_index:03d}"
+    short_hash = uuid.uuid4().hex[:8]
+    return f"{id_prefix}_{task_index:03d}_{short_hash}"
 
 
 def build_variant(

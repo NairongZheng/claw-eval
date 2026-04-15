@@ -7,7 +7,9 @@
 Run from repo root:
 
 ```bash
-/Users/zhengnairong/miniconda3/envs/dev/bin/python tasks_generator/T030_cross_service_meeting/generate.py --output-dir tasks --count 10 --force
+python tasks_generator/T030_cross_service_meeting/generate.py --output-dir tasks --count 10 --force
+
+python tasks_generator/T030_cross_service_meeting/generate.py --output-dir tasks_gen/T030_cross_service_meeting --count 50 --force
 ```
 
 ## Common flags

@@ -7,7 +7,9 @@
 在仓库根目录执行：
 
 ```bash
-/Users/zhengnairong/miniconda3/envs/dev/bin/python tasks_generator/T091_pinbench_humanize_blog/generate.py --output-dir tasks --count 50 --force
+python tasks_generator/T091_pinbench_humanize_blog/generate.py --output-dir tasks --count 50 --force
+
+python tasks_generator/T091_pinbench_humanize_blog/generate.py --output-dir tasks_gen/T091_pinbench_humanize_blog --count 50 --force
 ```
 
 ## Common flags

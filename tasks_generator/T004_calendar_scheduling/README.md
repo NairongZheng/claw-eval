@@ -12,7 +12,7 @@ This directory contains the full generation entrypoint for the `T004_calendar_sc
 Run from the repository root:
 
 ```bash
-/Users/zhengnairong/miniconda3/envs/dev/bin/python tasks_generator/T004_calendar_scheduling/generate.py --output-dir tasks --count 6 --force
+python tasks_generator/T004_calendar_scheduling/generate.py --output-dir tasks --count 6 --force
 ```
 
 This is the recommended mode. Generated `task.yaml` files assume tasks will finally be placed at `tasks/<task_id>/` and use `python tasks/<task_id>/local_calendar_server.py`.
@@ -20,7 +20,7 @@ This is the recommended mode. Generated `task.yaml` files assume tasks will fina
 You can also output elsewhere:
 
 ```bash
-/Users/zhengnairong/miniconda3/envs/dev/bin/python tasks_generator/T004_calendar_scheduling/generate.py --output-dir /tmp/calendar_tasks_en --count 20
+python tasks_generator/T004_calendar_scheduling/generate.py --output-dir tasks_gen/T004_calendar_scheduling --count 50 --force
 ```
 
 If you generate outside `tasks/`, move folders into `tasks/<task_id>/` before benchmark runs.

@@ -12,7 +12,7 @@
 在仓库根目录执行：
 
 ```bash
-/Users/zhengnairong/miniconda3/envs/dev/bin/python tasks_generator/T003zh_calendar_scheduling/generate.py --output-dir tasks --count 6 --force
+python tasks_generator/T003zh_calendar_scheduling/generate.py --output-dir tasks --count 6 --force
 ```
 
 这是**推荐方式**，因为生成出来的 `task.yaml` 默认假设最终 task 会放在 benchmark 的 `tasks/<task_id>/` 下面，并直接引用 `tasks/<task_id>/local_calendar_server.py`。
@@ -20,7 +20,7 @@
 如果你想输出到别的目录：
 
 ```bash
-/Users/zhengnairong/miniconda3/envs/dev/bin/python tasks_generator/T003zh_calendar_scheduling/generate.py --output-dir /tmp/calendar_tasks --count 20
+python tasks_generator/T003zh_calendar_scheduling/generate.py --output-dir tasks_gen/T003zh_calendar_scheduling --count 50 --force
 ```
 
 注意：如果先输出到别的目录再手动拷贝进 `tasks/`，也是可以的；但**真正评测前**需要保证目录最终位于 `tasks/<task_id>/`。

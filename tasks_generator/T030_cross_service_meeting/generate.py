@@ -7,6 +7,7 @@ import argparse
 import json
 import random
 import shutil
+import uuid
 import textwrap
 from datetime import date, timedelta
 from pathlib import Path
@@ -115,8 +116,9 @@ def build_scenario_variant(rng: random.Random) -> dict[str, Any]:
     return s
 
 
-def build_task_id(prefix: str, index: int) -> str:
-    return f"{prefix}_{index:03d}"
+def build_task_id(id_prefix: str, task_index: int) -> str:
+    short_hash = uuid.uuid4().hex[:8]
+    return f"{id_prefix}_{task_index:03d}_{short_hash}"
 
 
 def choose_people(rng: random.Random) -> dict[str, str]:

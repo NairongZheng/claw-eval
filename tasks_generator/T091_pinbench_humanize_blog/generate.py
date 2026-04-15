@@ -14,6 +14,7 @@ import argparse
 import json
 import random
 import shutil
+import uuid
 import textwrap
 from pathlib import Path
 from typing import Any
@@ -135,8 +136,9 @@ SECTION_TITLES = [
 ]
 
 
-def build_task_id(prefix: str, index: int) -> str:
-    return f"{prefix}_{index:03d}"
+def build_task_id(id_prefix: str, task_index: int) -> str:
+    short_hash = uuid.uuid4().hex[:8]
+    return f"{id_prefix}_{task_index:03d}_{short_hash}"
 
 
 def build_robotic_blog(rng: random.Random, context: str) -> str:
