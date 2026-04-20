@@ -9,6 +9,7 @@
   - `grader.py`
   - `generation_meta.json`
   - `fixtures/config/integrations.json`
+  - `local_config_server.py`
 - **不再复用其他 task 目录的 fixture**
 - 默认围绕：`degraded` / `expired` / `active 但存在治理缺口` 的 integration 组合
 - prompt、业务场景、集成组合、风险主题、密钥形态都会变化
