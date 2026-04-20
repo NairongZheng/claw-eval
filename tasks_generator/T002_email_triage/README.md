@@ -28,6 +28,7 @@ python tasks_generator/T002_email_triage/generate.py --output-dir tasks_gen/T002
 - `task.yaml`
 - `grader.py`（standalone）
 - `generation_meta.json`
+- `local_gmail_server.py`
 - `fixtures/gmail/inbox.json`
 
 ## Diversity model

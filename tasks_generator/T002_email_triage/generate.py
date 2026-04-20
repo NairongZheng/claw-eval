@@ -42,6 +42,27 @@ PROMPT_TEMPLATES = [
     "I want a fast inbox triage: group all emails into needs reply, FYI, or spam, and note the key signal for each one.",
 ]
 
+ROLE_HINTS = [
+    "Treat this like an executive-assistant triage pass.",
+    "Optimize for quick but defensible categorization.",
+    "Act like you're screening for urgency and intent, not just keywords.",
+    "Use common-sense inbox judgment, especially for borderline messages.",
+]
+
+OUTPUT_PREFERENCES = [
+    "A grouped list by category works well.",
+    "You can use a table if it stays compact.",
+    "Please keep it easy to skim for handoff.",
+    "Mention the strongest signal behind each classification.",
+]
+
+EDGE_CASE_HINTS = [
+    "Optional invitations and surveys may be FYI rather than spam.",
+    "Security notices can require action even if they look automated.",
+    "Partner training invites are often optional unless they explicitly need a reply.",
+    "Messages asking for credentials, payments, or urgent verification are usually spam.",
+]
+
 SUMMARY_HINTS = [
     "A bullet list is fine.",
     "A table is also acceptable.",
@@ -417,6 +438,56 @@ def build_spam_phishing(rng: random.Random) -> dict[str, Any]:
     }
 
 
+def build_spam_invoice_fraud(rng: random.Random) -> dict[str, Any]:
+    vendor = rng.choice(["Cloud Hosting", "Domain Services", "Payroll Desk", "Benefits Admin", "Carrier Billing"])
+    sender = rng.choice([
+        "billing-escalation@invoice-review.help",
+        "collections@secure-balance.top",
+        "finance-desk@payment-fix.click",
+        "admin@renewal-center.live",
+    ])
+    subject = rng.choice([
+        f"Overdue invoice requires immediate payment — {vendor}",
+        f"Final billing warning for {vendor}",
+        f"Account suspension notice: unsettled {vendor} invoice",
+    ])
+    body = (
+        f"Hello customer,\n\nWe detected an unpaid {vendor} invoice. To prevent suspension, open the attached portal and confirm your account credentials and payment method immediately. "
+        f"{rng.choice(SPAM_URGENCY_LINES)}\n\nBilling Review Team"
+    )
+    return {
+        "sender": sender,
+        "subject": subject,
+        "body": body,
+        "labels": ["INBOX"],
+        "is_read": choose_read_status(rng, preferred_unread=True),
+        "expected": PRIMARY_CATEGORIES["spam"],
+        "archetype": "invoice_fraud",
+    }
+
+
+def build_fyi_system_digest(rng: random.Random) -> dict[str, Any]:
+    system = rng.choice(["identity platform", "build pipeline", "customer support queue", "analytics warehouse", "CRM sync"])
+    subject = rng.choice([
+        f"Weekly service digest: {system}",
+        f"Operational summary for {system}",
+        f"FYI: {system} weekly metrics snapshot",
+    ])
+    body = (
+        f"Hello,\n\nHere is the weekly digest for the {system}: uptime remained stable, backlog is within threshold, and no direct action is requested. "
+        "Review when convenient if you'd like the latest metrics context.\n\nOperations Reporting"
+    )
+    return {
+        "sender": rng.choice(["ops-reporting@company.com", "systems-digest@company.com", "status@company.com"]),
+        "subject": subject,
+        "body": body,
+        "labels": ["INBOX"],
+        "is_read": choose_read_status(rng, preferred_unread=False),
+        "expected": PRIMARY_CATEGORIES["fyi"],
+        "archetype": "system_digest",
+    }
+
+
 def build_borderline_hr(rng: random.Random) -> dict[str, Any]:
     sender_name, sender_email = rng.choice(HR_SENDERS)
     due_date = rng.choice(OPTIONAL_ACTION_DEADLINES)
@@ -503,7 +574,9 @@ MESSAGE_BUILDERS = [
     ("needs_reply", build_needs_reply_security),
     ("fyi", build_fyi_newsletter),
     ("fyi", build_fyi_internal_notice),
+    ("fyi", build_fyi_system_digest),
     ("spam", build_spam_phishing),
+    ("spam", build_spam_invoice_fraud),
     ("needs_reply_or_fyi", build_borderline_hr),
     ("needs_reply_or_fyi", build_borderline_training),
     ("fyi_or_spam", build_borderline_survey),
@@ -515,7 +588,7 @@ def select_message_specs(rng: random.Random) -> list[dict[str, Any]]:
         build_needs_reply_manager(rng),
         rng.choice([build_needs_reply_meeting, build_needs_reply_security])(rng),
         rng.choice([build_fyi_newsletter, build_fyi_internal_notice])(rng),
-        build_spam_phishing(rng),
+        rng.choice([build_spam_phishing, build_spam_invoice_fraud])(rng),
         rng.choice([build_borderline_hr, build_borderline_training])(rng),
         build_borderline_survey(rng),
     ]
@@ -525,10 +598,13 @@ def select_message_specs(rng: random.Random) -> list[dict[str, Any]]:
         build_needs_reply_security,
         build_fyi_newsletter,
         build_fyi_internal_notice,
+        build_fyi_system_digest,
+        build_spam_invoice_fraud,
         build_borderline_hr,
         build_borderline_training,
     ]
-    while len(selected) < 8:
+    target_count = rng.randint(8, 9)
+    while len(selected) < target_count:
         candidate = rng.choice(optional_pool)(rng)
         signature = (candidate["sender"], candidate["subject"])
         existing = {(item["sender"], item["subject"]) for item in selected}
@@ -579,7 +655,16 @@ def build_messages(rng: random.Random) -> tuple[list[dict[str, Any]], dict[str, 
 
 
 def build_prompt(rng: random.Random) -> str:
-    return f"{rng.choice(PROMPT_TEMPLATES)} {rng.choice(SUMMARY_HINTS)}"
+    parts = [
+        rng.choice(ROLE_HINTS),
+        rng.choice(PROMPT_TEMPLATES),
+        rng.choice(SUMMARY_HINTS),
+        rng.choice(OUTPUT_PREFERENCES),
+        rng.choice(EDGE_CASE_HINTS),
+    ]
+    if rng.random() < 0.4:
+        parts.append(rng.choice(EDGE_CASE_HINTS))
+    return " ".join(parts)
 
 
 def build_reference_solution(expected: dict[str, dict[str, Any]]) -> str:
@@ -597,8 +682,172 @@ def build_reference_solution(expected: dict[str, dict[str, Any]]) -> str:
     return "\n".join(lines)
 
 
+def render_local_service(task_id: str) -> str:
+    return f'''"""Task-local Gmail mock service for {task_id}."""
+
+from __future__ import annotations
+
+import copy
+import json
+import os
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from typing import Any
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI(title="Task Local Gmail API")
+
+FIXTURES_PATH = Path(__file__).resolve().parent / "fixtures" / "gmail" / "inbox.json"
+
+_emails: list[dict[str, Any]] = []
+_audit_log: list[dict[str, Any]] = []
+_sent_messages: list[dict[str, Any]] = []
+_drafts: list[dict[str, Any]] = []
+
+
+def _load_fixtures() -> None:
+    global _emails
+    with open(FIXTURES_PATH, encoding="utf-8") as handle:
+        _emails = json.load(handle)
+
+    if not _emails:
+        return
+
+    dates = [datetime.fromisoformat(email["date"].replace("Z", "+00:00")) for email in _emails]
+    newest = max(dates)
+    target = datetime.now(timezone.utc) - timedelta(days=1)
+    delta = target - newest
+
+    for email in _emails:
+        old_dt = datetime.fromisoformat(email["date"].replace("Z", "+00:00"))
+        new_dt = old_dt + delta
+        email["date"] = new_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _log_call(endpoint: str, request_body: dict[str, Any], response_body: Any) -> None:
+    _audit_log.append({{
+        "endpoint": endpoint,
+        "request_body": request_body,
+        "response_body": response_body,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }})
+
+
+class ListMessagesRequest(BaseModel):
+    days_back: int = 7
+    max_results: int = 20
+
+
+class GetMessageRequest(BaseModel):
+    message_id: str
+
+
+class SendMessageRequest(BaseModel):
+    to: str
+    subject: str
+    body: str
+
+
+class SaveDraftRequest(BaseModel):
+    to: str
+    subject: str
+    body: str
+    reply_to_message_id: str | None = None
+
+
+@app.post("/gmail/messages")
+def list_messages(req: ListMessagesRequest | None = None) -> dict[str, Any]:
+    if req is None:
+        req = ListMessagesRequest()
+
+    cutoff = datetime.now(timezone.utc) - timedelta(days=req.days_back)
+    results = []
+    for email in _emails:
+        email_date = datetime.fromisoformat(email["date"].replace("Z", "+00:00"))
+        if email_date >= cutoff:
+            results.append({{
+                "message_id": email["message_id"],
+                "from": email["from"],
+                "subject": email["subject"],
+                "date": email["date"],
+                "is_read": email["is_read"],
+                "labels": email["labels"],
+            }})
+    results = results[: req.max_results]
+    resp = {{"messages": results, "total": len(results)}}
+    _log_call("/gmail/messages", req.model_dump(), resp)
+    return resp
+
+
+@app.post("/gmail/messages/get")
+def get_message(req: GetMessageRequest) -> dict[str, Any]:
+    for email in _emails:
+        if email["message_id"] == req.message_id:
+            resp = copy.deepcopy(email)
+            _log_call("/gmail/messages/get", req.model_dump(), resp)
+            return resp
+    resp = {{"error": f"Message {{req.message_id}} not found"}}
+    _log_call("/gmail/messages/get", req.model_dump(), resp)
+    return resp
+
+
+@app.post("/gmail/send")
+def send_message(req: SendMessageRequest) -> dict[str, Any]:
+    msg = {{
+        "to": req.to,
+        "subject": req.subject,
+        "body": req.body,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }}
+    _sent_messages.append(msg)
+    resp = {{"status": "sent", "message": msg}}
+    _log_call("/gmail/send", req.model_dump(), resp)
+    return resp
+
+
+@app.post("/gmail/drafts/save")
+def save_draft(req: SaveDraftRequest) -> dict[str, Any]:
+    draft = {{
+        "to": req.to,
+        "subject": req.subject,
+        "body": req.body,
+        "reply_to_message_id": req.reply_to_message_id,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }}
+    _drafts.append(draft)
+    resp = {{"status": "draft_saved", "draft": draft}}
+    _log_call("/gmail/drafts/save", req.model_dump(), resp)
+    return resp
+
+
+@app.get("/gmail/audit")
+def get_audit() -> dict[str, Any]:
+    return {{"calls": _audit_log, "sent_messages": _sent_messages, "drafts": _drafts}}
+
+
+@app.post("/gmail/reset")
+def reset_state() -> dict[str, str]:
+    global _audit_log, _sent_messages, _drafts
+    _audit_log = []
+    _sent_messages = []
+    _drafts = []
+    _load_fixtures()
+    return {{"status": "reset"}}
+
+
+_load_fixtures()
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", "9100")))
+'''
+
+
 def build_task_yaml(task_id: str, prompt_text: str, expected: dict[str, dict[str, Any]]) -> dict[str, Any]:
-    service_base = f"tasks/{task_id}/fixtures"
     return {
         "task_id": task_id,
         "task_name": "Email Triage Variant (EN)",
@@ -609,13 +858,13 @@ def build_task_yaml(task_id: str, prompt_text: str, expected: dict[str, dict[str
         "services": [
             {
                 "name": "gmail",
-                "command": "python mock_services/gmail/server.py",
+                "command": f"python tasks/{task_id}/local_gmail_server.py",
                 "port": 9100,
                 "health_check": "http://localhost:9100/gmail/messages",
                 "health_check_method": "POST",
                 "ready_timeout": 10,
                 "reset_endpoint": "http://localhost:9100/gmail/reset",
-                "env": {"GMAIL_FIXTURES": f"{service_base}/gmail/inbox.json"},
+                "env": {},
             }
         ],
         "prompt": {"text": prompt_text, "language": "en"},
@@ -777,7 +1026,7 @@ class GeneratedEmailTriageGraderEN(AbstractGrader):
                 raw = resp.choices[0].message.content or "{{}}"
                 raw = re.sub(r"^```(?:json)?\\s*", "", raw.strip())
                 raw = re.sub(r"\\s*```$", "", raw.strip())
-                match = re.search(r'\{{[^{{}}]*\}}', raw)
+                match = re.search(r'\\{{[^{{}}]*\\}}', raw)
                 if match:
                     raw = match.group(0)
                 classifications = json.loads(raw)
@@ -822,6 +1071,7 @@ def generate_variant(output_dir: Path, task_index: int, seed: int, id_prefix: st
     prompt_text = build_prompt(rng)
 
     write_json(fixtures_dir / "inbox.json", messages)
+    (task_dir / "local_gmail_server.py").write_text(render_local_service(task_id), encoding="utf-8")
     write_yaml(task_dir / "task.yaml", build_task_yaml(task_id, prompt_text, expected))
     (task_dir / "grader.py").write_text(render_grader(task_id, expected), encoding="utf-8")
 

@@ -28,6 +28,7 @@ python tasks_generator/T005zh_email_reply_draft/generate.py --output-dir tasks_g
 - `task.yaml`
 - `grader.py`（standalone）
 - `generation_meta.json`
+- `local_gmail_server.py`
 - `fixtures/gmail/inbox.json`
 
 ## Diversity model
