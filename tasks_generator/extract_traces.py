@@ -25,7 +25,10 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
             line = line.strip()
             if not line:
                 continue
-            items.append(json.loads(line))
+            try:
+                items.append(json.loads(line))
+            except json.JSONDecodeError as e:
+                print(f"Warning: failed to parse line in {path}: {line[:100]}... ({e})")
     return items
 
 
